@@ -7,6 +7,7 @@ public class CanFallenScript : MonoBehaviour
         if(other.CompareTag("Ground"))
         {
             GameManager.Instance.SwitchCanState(true);
+            GameManager.Instance.ShowPlayersDrink();
             Debug.Log("Puszka upadła!");
         }
     }

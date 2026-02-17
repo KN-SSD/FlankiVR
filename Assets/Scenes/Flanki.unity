@@ -1671,7 +1671,7 @@ RectTransform:
   m_Father: {fileID: 608921660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 3.93, y: -0}
   m_SizeDelta: {x: 17.85, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2011,7 +2011,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &638148650
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2294,17 +2294,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   totalLiquid: 100
-  drinkingRate: 10
+  drinkingRate: 20
   pressure: 0
   pressureGain: 10
   pressureDecay: 25
-  goodZoneMin: 40
-  goodZoneMax: 75
+  goodZoneMin: 30
+  goodZoneMax: 85
   chokeThreshold: 95
   chokePenaltyTime: 2
   headDistanceLimit: 0.3
   heightOffset: 0.15
-  requiredTilt: 80
+  requiredTilt: 70
   liquidSlider: {fileID: 1028423074}
   pressureSlider: {fileID: 65959545}
   pressureFillColor: {fileID: 511801385}
@@ -2361,7 +2361,7 @@ RectTransform:
   m_Father: {fileID: 2094709150}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 3.93, y: -0}
   m_SizeDelta: {x: 17.85, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2870,7 +2870,7 @@ RectTransform:
   m_Father: {fileID: 1840778661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4172,7 +4172,7 @@ RectTransform:
   m_Father: {fileID: 551373513}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -4520,7 +4520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   rockTag: Rock
-  knockoutForce: 5
+  knockoutForce: 0.02
 --- !u!65 &1763700411
 BoxCollider:
   m_ObjectHideFlags: 0

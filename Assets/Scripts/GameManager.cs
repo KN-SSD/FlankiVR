@@ -28,6 +28,9 @@ public class GameManager : MonoBehaviour
         isCanDown = state;
     }
 
-    
+    public void ShowPlayersDrink()
+    {
+        playersDrink.SetActive(true);
+    }
 
 }
