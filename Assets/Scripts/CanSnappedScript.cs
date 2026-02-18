@@ -10,6 +10,7 @@ public class CanSnappedScript : MonoBehaviour
     void Awake()
     {
         socket = GetComponent<XRSocketInteractor>();
+       
     }
 
     void OnEnable()
@@ -19,7 +20,6 @@ public class CanSnappedScript : MonoBehaviour
 
     private void OnCanPlaced(SelectEnterEventArgs args)
     {
-        GameManager.Instance.SwitchCanState(false);
-        Debug.Log("STOP! Puszka stoi - koniec picia!");        
+        GameManager.Instance.isCanDown = false;
     }
 }
