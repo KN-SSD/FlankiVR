@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CanFallenScript : MonoBehaviour
@@ -6,9 +7,12 @@ public class CanFallenScript : MonoBehaviour
     {
         if(other.CompareTag("Ground"))
         {
-            GameManager.Instance.SwitchCanState(true);
-            GameManager.Instance.ShowPlayersDrink();
+            GameManager.Instance.isCanDown = true;
             Debug.Log("Puszka upadła!");
+            if(GameManager.Instance.isCanDown && GameManager.Instance.isPlayersTurn)
+            {
+                GameManager.Instance.SwitchDrinkVisibility(true);
+            }
         }
-    }
+    }  
 }

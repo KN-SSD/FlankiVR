@@ -1,5 +1,6 @@
-using UnityEditorInternal;
+using UnityEditor.Callbacks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -7,14 +8,20 @@ public class GameManager : MonoBehaviour
 
     public bool isCanDown = false;
     public bool isPlayersTurn = true;
+    public bool isPlayerAtHisSpot = true;
+    public bool hasPlayerThrown = false;
+    public bool gameStarted = false;
     [SerializeField] GameObject playersDrink;
+    [SerializeField] GameObject player;
+    [SerializeField] GameObject rock;
+
+    private Rigidbody rockRb;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -22,15 +29,43 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-    public void SwitchCanState(bool state)
+    void Start()
     {
-        isCanDown = state;
+        StartGame();
     }
 
-    public void ShowPlayersDrink()
+    private void StartGame()
     {
-        playersDrink.SetActive(true);
+        rockRb = rock.GetComponent<Rigidbody>();
+        player.transform.position = new Vector3(0, 0, 0);
+        SwitchDrinkVisibility(false);
+        PlayerDrinkingTurn();
+        gameStarted = true;
+    }
+    public void PlayerDrinkingTurn()
+    {
+        isPlayersTurn = true;
+        SwitchDrinkVisibility(false);
+        rockRb.linearVelocity = Vector3.zero;  
+        rockRb.angularVelocity = Vector3.zero; 
+
+        rock.transform.position = new Vector3(0.5f, 1.07f, 0.4f);
+
+        rock.transform.rotation = Quaternion.identity;
+
+    }
+
+    public void PlayerRunningTurn()
+    {
+        isPlayersTurn = false;
+        SwitchDrinkVisibility(false);
+    }
+
+
+
+    public void SwitchDrinkVisibility(bool state)
+    {
+        playersDrink.SetActive(state);
     }
 
 }

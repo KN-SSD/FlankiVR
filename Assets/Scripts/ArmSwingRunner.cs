@@ -58,7 +58,7 @@ public class ArmSwingRunner : MonoBehaviour
         bool leftHandActive = Mathf.Abs(leftDeltaY) > minHandMove;
         bool rightHandActive = Mathf.Abs(rightDeltaY) > minHandMove;
 
-        if (isTriggerPressed && isAlternating && leftHandActive && rightHandActive && GameManager.Instance.isCanDown)
+        if (isTriggerPressed && isAlternating && leftHandActive && rightHandActive && CanPlayerRun())
         {
             currentSpeed += acceleration * Time.deltaTime;
         }
@@ -79,5 +79,25 @@ public class ArmSwingRunner : MonoBehaviour
 
         prevLeftPos = leftHand.position;
         prevRightPos = rightHand.position;
+    }
+
+    private bool CanPlayerRun()
+    {
+        if(GameManager.Instance.isPlayerAtHisSpot && GameManager.Instance.isCanDown && !GameManager.Instance.isPlayersTurn)
+        {
+            return true;
+        }
+        else if(!GameManager.Instance.isPlayerAtHisSpot && GameManager.Instance.isCanDown && !GameManager.Instance.isPlayersTurn)
+        {
+            return true;
+        }
+        else if (!GameManager.Instance.isPlayerAtHisSpot && !GameManager.Instance.isCanDown && !GameManager.Instance.isPlayersTurn)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
