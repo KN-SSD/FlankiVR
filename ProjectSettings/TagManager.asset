@@ -8,6 +8,7 @@ TagManager:
   - Rock
   - Ground
   - Drink
+  - RockHolder
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - IgnoreGround
   - PlayersSpace
   - Player
-  - 
+  - Can
   - 
   - 
   - 
