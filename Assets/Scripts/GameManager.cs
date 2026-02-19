@@ -36,23 +36,20 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
-        rockRb = rock.GetComponent<Rigidbody>();
         player.transform.position = new Vector3(0, 0, 0);
         SwitchDrinkVisibility(false);
-        PlayerDrinkingTurn();
+        //PlayerDrinkingTurn();
         gameStarted = true;
     }
     public void PlayerDrinkingTurn()
     {
+        Debug.Log("Tura Gracza: Pijesz!");
         isPlayersTurn = true;
         SwitchDrinkVisibility(false);
-        rockRb.linearVelocity = Vector3.zero;  
-        rockRb.angularVelocity = Vector3.zero; 
-
-        rock.transform.position = new Vector3(0.5f, 1.07f, 0.4f);
-
-        rock.transform.rotation = Quaternion.identity;
-
+        if(GameObject.FindGameObjectsWithTag("Rock").Length == 0)
+        {
+            Instantiate(rock, new Vector3(0.5f, 1.07f, 0.4f), Quaternion.identity);
+        }
     }
 
     public void PlayerRunningTurn()
@@ -66,6 +63,14 @@ public class GameManager : MonoBehaviour
     public void SwitchDrinkVisibility(bool state)
     {
         playersDrink.SetActive(state);
+    }
+
+    public void SwitchTurnAfterThrow()
+    {
+        if(isPlayersTurn)
+            PlayerRunningTurn();
+        else
+            PlayerDrinkingTurn();
     }
 
 }
