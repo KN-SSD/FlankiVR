@@ -26,4 +26,10 @@ public class UIManager : MonoBehaviour
         string currentSceneName = SceneManager.GetActiveScene().name;
         SceneManager.LoadScene(currentSceneName);
     }
+
+    public void PlayGame()
+    {
+        SceneManager.LoadScene("Flanki");
+    }
+
 }
