@@ -3,16 +3,18 @@ using UnityEngine;
 
 public class RockBehavior : MonoBehaviour
 {
-
     private bool isTimerRunning = false;
+
     void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("RockHolder"))
             return;
 
+        if (collision.relativeVelocity.magnitude < 0.5f)
+            return;
+
         if (!isTimerRunning)
             StartCoroutine(CheckMiss());
-        
     }
 
     IEnumerator CheckMiss()
@@ -28,5 +30,4 @@ public class RockBehavior : MonoBehaviour
         isTimerRunning = false;
         Destroy(gameObject);
     }
-
 }
