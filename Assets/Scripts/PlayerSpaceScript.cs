@@ -12,12 +12,11 @@ public class PlayerSpaceScript : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
-            GameManager.Instance.isPlayerAtHisSpot = true;
-        }
+        if (!other.CompareTag("Player")) return;
 
-        if (GameManager.Instance.isPlayerAtHisSpot && !GameManager.Instance.isCanDown && GameManager.Instance.gameStarted)
+        GameManager.Instance.isPlayerAtHisSpot = true;
+
+        if (other.CompareTag("Player") && GameManager.Instance.isPlayerAtHisSpot && !GameManager.Instance.isCanDown && GameManager.Instance.gameStarted)
         {
             GameManager.Instance.PlayerDrinkingTurn();
         }

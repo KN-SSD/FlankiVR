@@ -4,30 +4,27 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class EnemyScript : MonoBehaviour
 {
-    [Header("Referencje")]
-    public Transform botHand;             
-    public GameObject centerCan;          
-    public XRSocketInteractor socket;     
+    public Transform botHand;
+    public GameObject centerCan;
+    public XRSocketInteractor socket;
 
-    [Header("Ustawienia Ruchu")]
-    public float moveSpeed = 4.0f;        
-    public float rotationSpeed = 10.0f;   
-    public float waitTime = 0.5f;         
-    public Vector3 homePosition = new Vector3(0, 0, 8f); 
+    public float moveSpeed = 4.0f;
+    public float rotationSpeed = 10.0f;
+    public float waitTime = 0.5f;
+    public Vector3 homePosition = new Vector3(0, 0, 8f);
 
-    [Header("Poprawki Błędów")]
-    public bool isModelBackwards = true;  
+    public bool isModelBackwards = true;
 
-    [Header("Ustawienia Rzutu (Atak Bota)")]
-    public float throwDelay = 2.0f;       
-    public GameObject rockPrefab;         
-    public Transform throwPoint;          
-    public float throwForce = 8f;         
-    public float throwUpwardForce = 2f;   
+    public float throwDelay = 2.0f;
+    public GameObject rockPrefab;
+    public Transform throwPoint;
+    public float throwForce = 8f;
+    public float throwUpwardForce = 2f;
 
     private bool isRunningSequence = false;
-    private bool isPreparingThrow = false; 
-    private Vector3 originalCanScale;    
+    private bool isPreparingThrow = false;
+    private bool hasThrownThisTurn = false;
+    private Vector3 originalCanScale;
 
     void Start()
     {
@@ -36,7 +33,7 @@ public class EnemyScript : MonoBehaviour
             originalCanScale = centerCan.transform.localScale;
         }
 
-        if (throwPoint == null) 
+        if (throwPoint == null)
         {
             throwPoint = botHand;
         }
@@ -44,50 +41,55 @@ public class EnemyScript : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance != null && 
-            GameManager.Instance.isPlayersTurn && 
-            GameManager.Instance.isCanDown && 
+        if (GameManager.Instance != null &&
+            GameManager.Instance.isPlayersTurn &&
+            GameManager.Instance.isCanDown &&
             !isRunningSequence)
         {
             StartCoroutine(FetchAndResetCanSequence());
         }
 
-        if (GameManager.Instance != null && 
-            !GameManager.Instance.isPlayersTurn && 
-            GameManager.Instance.isPlayerAtHisSpot && 
-            !GameManager.Instance.isCanDown && 
-            !isRunningSequence && 
-            !isPreparingThrow)
+        if (GameManager.Instance != null &&
+            !GameManager.Instance.isPlayersTurn &&
+            GameManager.Instance.isPlayerAtHisSpot &&
+            !GameManager.Instance.isCanDown &&
+            !isRunningSequence &&
+            !isPreparingThrow &&
+            !hasThrownThisTurn)
         {
             StartCoroutine(PrepareAndThrowSequence());
         }
     }
 
-   
+    public void ResetThrowFlag()
+    {
+        hasThrownThisTurn = false;
+    }
+
     IEnumerator PrepareAndThrowSequence()
     {
         isPreparingThrow = true;
-        Debug.Log($"[BOT] Szykuje się do rzutu... (Czeka {throwDelay}s)");
 
         yield return new WaitForSeconds(throwDelay);
 
-        if (GameManager.Instance != null && 
-            !GameManager.Instance.isPlayersTurn && 
-            GameManager.Instance.isPlayerAtHisSpot && 
-            !GameManager.Instance.isCanDown)
+        if (GameManager.Instance != null &&
+            !GameManager.Instance.isPlayersTurn &&
+            GameManager.Instance.isPlayerAtHisSpot &&
+            !GameManager.Instance.isCanDown &&
+            !hasThrownThisTurn)
         {
             ThrowRock();
         }
 
         yield return new WaitForSeconds(1.5f);
-        isPreparingThrow = false; 
+        isPreparingThrow = false;
     }
 
-    void ThrowRock()
+   void ThrowRock()
     {
         if (rockPrefab == null || centerCan == null) return;
 
-        Debug.Log("[BOT] RZUT!");
+        hasThrownThisTurn = true;
 
         GameObject rock = Instantiate(rockPrefab, throwPoint.position, throwPoint.rotation);
         Rigidbody rb = rock.GetComponent<Rigidbody>();
@@ -95,44 +97,66 @@ public class EnemyScript : MonoBehaviour
         if (rb != null)
         {
             Vector3 targetPos = centerCan.transform.position;
-            targetPos.y += 0.15f; 
+            targetPos.y += 0.15f;
+
+            float currentThrowForce = throwForce;
+            float currentUpwardForce = throwUpwardForce;
+
+            bool isHit = Random.value <= 0.3f;
+
+            if (isHit)
+            {
+                targetPos.x += Random.Range(-0.05f, 0.05f);
+                targetPos.z += Random.Range(-0.05f, 0.05f);
+            }
+            else
+            {
+                Vector2 randomDir = Random.insideUnitCircle.normalized;
+                float missDistance = Random.Range(0.6f, 1.5f);
+                
+                float missX = randomDir.x * missDistance;
+                float missZ = randomDir.y * missDistance;
+                float missY = Random.Range(-0.2f, 0.4f);
+
+                targetPos += new Vector3(missX, missY, missZ);
+
+                currentThrowForce *= Random.Range(0.5f, 1.5f);
+                currentUpwardForce *= Random.Range(0.5f, 1.5f);
+            }
 
             Vector3 direction = (targetPos - throwPoint.position).normalized;
 
-            Vector3 force = (direction * throwForce) + (Vector3.up * throwUpwardForce);
-            
+            Vector3 force = (direction * currentThrowForce) + (Vector3.up * currentUpwardForce);
             rb.AddForce(force, ForceMode.Impulse);
 
             rb.angularVelocity = new Vector3(Random.Range(-5f, 5f), Random.Range(-5f, 5f), Random.Range(-5f, 5f));
         }
     }
 
-    
     IEnumerator FetchAndResetCanSequence()
     {
         isRunningSequence = true;
-        Debug.Log("[BOT] Biegne po puszke!");
 
         yield return StartCoroutine(MoveToTarget(centerCan.transform.position));
-        yield return new WaitForSeconds(waitTime); 
+        yield return new WaitForSeconds(waitTime);
 
         Rigidbody canRb = centerCan.GetComponent<Rigidbody>();
         if (canRb != null)
         {
-            canRb.isKinematic = true; 
+            canRb.isKinematic = true;
             canRb.linearVelocity = Vector3.zero;
             canRb.angularVelocity = Vector3.zero;
         }
 
-        centerCan.transform.SetParent(botHand, true); 
+        centerCan.transform.SetParent(botHand, true);
         centerCan.transform.localPosition = Vector3.zero;
         centerCan.transform.localRotation = Quaternion.identity;
 
         yield return StartCoroutine(MoveToTarget(socket.transform.position));
         yield return new WaitForSeconds(waitTime);
 
-        centerCan.transform.SetParent(null); 
-        centerCan.transform.localScale = originalCanScale; 
+        centerCan.transform.SetParent(null);
+        centerCan.transform.localScale = originalCanScale;
 
         socket.enabled = true;
         socket.socketActive = true;
@@ -144,23 +168,25 @@ public class EnemyScript : MonoBehaviour
         if (canRb != null) canRb.isKinematic = false;
 
         GameManager.Instance.isCanDown = false;
-        Debug.Log("[BOT] Puszka postawiona!");
 
         yield return StartCoroutine(MoveToTarget(homePosition));
-
         yield return StartCoroutine(RotateTowards(Vector3.zero));
-        
+
         isRunningSequence = false;
         GameManager.Instance.PlayerRunningTurn();
     }
 
-
     IEnumerator MoveToTarget(Vector3 targetPosition)
     {
         Vector3 targetXZ = new Vector3(targetPosition.x, transform.position.y, targetPosition.z);
+        
+        float currentSpeed = 0f;
+        float acceleration = Random.Range(1.5f, 4.0f);
 
         while (Vector3.Distance(transform.position, targetXZ) > 0.05f)
         {
+            currentSpeed = Mathf.MoveTowards(currentSpeed, moveSpeed, acceleration * Time.deltaTime);
+
             Vector3 direction = (targetXZ - transform.position).normalized;
             if (direction != Vector3.zero)
             {
@@ -169,9 +195,9 @@ public class EnemyScript : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             }
 
-            transform.position = Vector3.MoveTowards(transform.position, targetXZ, moveSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, targetXZ, currentSpeed * Time.deltaTime);
 
-            yield return null; 
+            yield return null;
         }
         transform.position = targetXZ;
     }
@@ -180,12 +206,12 @@ public class EnemyScript : MonoBehaviour
     {
         Vector3 targetXZ = new Vector3(targetPosition.x, transform.position.y, targetPosition.z);
         Vector3 direction = (targetXZ - transform.position).normalized;
-        
+
         if (direction != Vector3.zero)
         {
             Vector3 lookDirection = isModelBackwards ? -direction : direction;
             Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
-            
+
             while (Quaternion.Angle(transform.rotation, targetRotation) > 1.0f)
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);

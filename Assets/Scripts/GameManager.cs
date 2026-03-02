@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject playersDrink;
     [SerializeField] GameObject player;
     [SerializeField] GameObject rock;
-
+    [SerializeField] EnemyScript enemy;
+    private GameObject currentRockInstance;
     private Rigidbody rockRb;
 
     private void Awake()
@@ -46,16 +47,23 @@ public class GameManager : MonoBehaviour
         Debug.Log("Tura Gracza: Pijesz!");
         isPlayersTurn = true;
         SwitchDrinkVisibility(false);
-        if(GameObject.FindGameObjectsWithTag("Rock").Length == 0)
+
+        if (currentRockInstance == null)
         {
-            Instantiate(rock, new Vector3(0.5f, 1.07f, 0.4f), Quaternion.identity);
+            currentRockInstance = Instantiate(rock, new Vector3(0.5f, 1.07f, 0.4f), Quaternion.identity);
         }
     }
 
     public void PlayerRunningTurn()
     {
+        Debug.Log("Tura Gracza: Biegniesz!");
         isPlayersTurn = false;
         SwitchDrinkVisibility(false);
+
+        if (enemy != null)
+        {
+            enemy.ResetThrowFlag();
+        }
     }
 
 
@@ -67,7 +75,7 @@ public class GameManager : MonoBehaviour
 
     public void SwitchTurnAfterThrow()
     {
-        if(isPlayersTurn)
+        if (isPlayersTurn)
             PlayerRunningTurn();
         else
             PlayerDrinkingTurn();

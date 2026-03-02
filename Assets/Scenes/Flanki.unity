@@ -236,8 +236,8 @@ Transform:
   m_GameObject: {fileID: 68661252}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.449, z: 0}
-  m_LocalScale: {x: 1, y: 0.10482, z: 1}
+  m_LocalPosition: {x: 0, y: -0.449, z: 0.0841}
+  m_LocalScale: {x: 1, y: 0.10482, z: 1.1683255}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1054736941}
@@ -2297,6 +2297,7 @@ MonoBehaviour:
   playersDrink: {fileID: 638148649}
   player: {fileID: 988399499}
   rock: {fileID: 7630766515107863171, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
+  enemy: {fileID: 1130328409}
 --- !u!4 &747597966
 Transform:
   m_ObjectHideFlags: 0
@@ -3076,8 +3077,8 @@ Transform:
   m_GameObject: {fileID: 1054736937}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.434, z: 0.152}
-  m_LocalScale: {x: 1.267774, y: 1, z: 0.7139911}
+  m_LocalPosition: {x: 0, y: 0.434, z: -0.9173}
+  m_LocalScale: {x: 5.0844073, y: 1, z: 2.8526087}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 68661253}
@@ -4207,7 +4208,7 @@ Transform:
   m_GameObject: {fileID: 1598464373}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.302, y: 0.071, z: -0.729}
+  m_LocalPosition: {x: -0.302, y: 0.1507, z: -0.6895}
   m_LocalScale: {x: 0.25754, y: 0.25754, z: 0.3122494}
   m_ConstrainProportionsScale: 0
   m_Children: []
