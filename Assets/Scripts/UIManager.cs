@@ -1,17 +1,19 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-   [Header("Input Setup")]
+    [Header("Input Setup")]
     [Tooltip("Assign the Input Action for the X button here.")]
     [SerializeField] private InputActionProperty restartButtonAction;
+    [SerializeField] private TextMeshProUGUI finishedText;
 
     private void OnEnable()
     {
         restartButtonAction.action.Enable();
-        
+
         restartButtonAction.action.performed += RestartScene;
     }
 
@@ -30,6 +32,25 @@ public class UIManager : MonoBehaviour
     public void PlayGame()
     {
         SceneManager.LoadScene("Flanki");
+    }
+
+    public void GoToMenu()
+    {
+        SceneManager.LoadScene("Menu");
+    }
+
+    void Awake()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+
+        if (scene.name == "Finished")
+        {
+            if (GameManager.hasPlayerWon)
+                finishedText.text = "Wygrałeś!";
+            else    
+                finishedText.text = "Przegrałeś!";
+
+        }
     }
 
 }
