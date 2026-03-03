@@ -41,6 +41,7 @@ public class EnemyScript : MonoBehaviour
 
     void Update()
     {
+        // 1. Tura Gracza - Bot Sprząta Puszkę
         if (GameManager.Instance != null &&
             GameManager.Instance.isPlayersTurn &&
             GameManager.Instance.isCanDown &&
@@ -49,6 +50,7 @@ public class EnemyScript : MonoBehaviour
             StartCoroutine(FetchAndResetCanSequence());
         }
 
+        // 2. Tura Bota - Bot Szykuje Się Do Rzutu
         if (GameManager.Instance != null &&
             !GameManager.Instance.isPlayersTurn &&
             GameManager.Instance.isPlayerAtHisSpot &&
@@ -58,6 +60,19 @@ public class EnemyScript : MonoBehaviour
             !hasThrownThisTurn)
         {
             StartCoroutine(PrepareAndThrowSequence());
+        }
+
+        // 3. Tura Bota - Bot Pije po celnym rzucie
+        if (GameManager.Instance != null &&
+            !GameManager.Instance.isPlayersTurn &&
+            hasThrownThisTurn)
+        {
+            // Bot pije JEŚLI puszka leży LUB gracz jeszcze nie wrócił do bazy
+            if (GameManager.Instance.isCanDown || !GameManager.Instance.isPlayerAtHisSpot)
+            {
+                float currentDrinkSpeed = Random.Range(7f, 15f);
+                GameManager.Instance.enemyDrinkLeft -= currentDrinkSpeed * Time.deltaTime;
+            }
         }
     }
 
@@ -85,7 +100,7 @@ public class EnemyScript : MonoBehaviour
         isPreparingThrow = false;
     }
 
-   void ThrowRock()
+    void ThrowRock()
     {
         if (rockPrefab == null || centerCan == null) return;
 
@@ -102,7 +117,7 @@ public class EnemyScript : MonoBehaviour
             float currentThrowForce = throwForce;
             float currentUpwardForce = throwUpwardForce;
 
-            bool isHit = Random.value <= 0.3f;
+            bool isHit = Random.value <= 0.45f;
 
             if (isHit)
             {

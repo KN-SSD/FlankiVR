@@ -9,6 +9,7 @@ TagManager:
   - Ground
   - Drink
   - RockHolder
+  - PlayerSpaceCheck
   layers:
   - Default
   - TransparentFX

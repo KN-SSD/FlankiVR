@@ -7,7 +7,6 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 public class DrinkingMinigame : MonoBehaviour
 {
     [Header("--- Stan Napoju ---")]
-    public float totalLiquid = 100f;        
     public float drinkingRate = 15f;        
 
     [Header("--- Mechanika Spamowania ---")]
@@ -42,7 +41,7 @@ public class DrinkingMinigame : MonoBehaviour
         grab = GetComponent<XRGrabInteractable>();
         if (Camera.main != null) headCamera = Camera.main.transform;
 
-        if (liquidSlider) liquidSlider.maxValue = totalLiquid;
+        if (liquidSlider) liquidSlider.maxValue = GameManager.Instance.playersDrinkLeft;
         if (pressureSlider) pressureSlider.maxValue = 100f;
     }
 
@@ -83,14 +82,7 @@ public class DrinkingMinigame : MonoBehaviour
         }
         else if (pressure >= goodZoneMin && pressure <= goodZoneMax)
         {
-            totalLiquid -= drinkingRate * Time.deltaTime;
-            
-            if (totalLiquid <= 0)
-            {
-                totalLiquid = 0;
-                Debug.Log("NAPÓJ WYPITE! KONIEC!");
-                gameObject.SetActive(false); 
-            }
+            GameManager.Instance.playersDrinkLeft -= drinkingRate * Time.deltaTime;
         }
     }
 
@@ -135,7 +127,7 @@ public class DrinkingMinigame : MonoBehaviour
 
     void UpdateUI()
     {
-        if (liquidSlider) liquidSlider.value = totalLiquid;
+        if (liquidSlider) liquidSlider.value = GameManager.Instance.playersDrinkLeft;
         if (pressureSlider) pressureSlider.value = pressure;
 
         if (pressureFillColor && !isChoked)

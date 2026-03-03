@@ -602,6 +602,7 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
+  finishedText: {fileID: 0}
 --- !u!114 &212996325
 MonoBehaviour:
   m_ObjectHideFlags: 0
