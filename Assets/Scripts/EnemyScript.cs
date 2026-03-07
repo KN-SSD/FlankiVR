@@ -26,10 +26,13 @@ public class EnemyScript : MonoBehaviour
     private bool hasThrownThisTurn = false;
     private Vector3 originalCanScale;
 
+    private Animator anim;
+
     void Start()
     {
         if (centerCan != null)
         {
+            anim = gameObject.GetComponentInChildren<Animator>();
             originalCanScale = centerCan.transform.localScale;
         }
 
@@ -41,7 +44,6 @@ public class EnemyScript : MonoBehaviour
 
     void Update()
     {
-        // 1. Tura Gracza - Bot Sprząta Puszkę
         if (GameManager.Instance != null &&
             GameManager.Instance.isPlayersTurn &&
             GameManager.Instance.isCanDown &&
@@ -50,7 +52,6 @@ public class EnemyScript : MonoBehaviour
             StartCoroutine(FetchAndResetCanSequence());
         }
 
-        // 2. Tura Bota - Bot Szykuje Się Do Rzutu
         if (GameManager.Instance != null &&
             !GameManager.Instance.isPlayersTurn &&
             GameManager.Instance.isPlayerAtHisSpot &&
@@ -62,17 +63,24 @@ public class EnemyScript : MonoBehaviour
             StartCoroutine(PrepareAndThrowSequence());
         }
 
-        // 3. Tura Bota - Bot Pije po celnym rzucie
+        // Logika picia i animacji picia
+        bool shouldDrink = false;
         if (GameManager.Instance != null &&
             !GameManager.Instance.isPlayersTurn &&
             hasThrownThisTurn)
         {
-            // Bot pije JEŚLI puszka leży LUB gracz jeszcze nie wrócił do bazy
             if (GameManager.Instance.isCanDown || !GameManager.Instance.isPlayerAtHisSpot)
             {
+                shouldDrink = true;
                 float currentDrinkSpeed = Random.Range(7f, 15f);
                 GameManager.Instance.enemyDrinkLeft -= currentDrinkSpeed * Time.deltaTime;
             }
+        }
+        
+        // Zaktualizowanie animacji picia co klatkę
+        if (anim != null)
+        {
+            anim.SetBool("isDrinking", shouldDrink);
         }
     }
 
@@ -105,7 +113,13 @@ public class EnemyScript : MonoBehaviour
         if (rockPrefab == null || centerCan == null) return;
 
         hasThrownThisTurn = true;
+        if (anim != null) anim.SetTrigger("Throw");
+        StartCoroutine(RockDelay());
+    }
 
+    IEnumerator RockDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
         GameObject rock = Instantiate(rockPrefab, throwPoint.position, throwPoint.rotation);
         Rigidbody rb = rock.GetComponent<Rigidbody>();
 
@@ -153,7 +167,10 @@ public class EnemyScript : MonoBehaviour
         isRunningSequence = true;
 
         yield return StartCoroutine(MoveToTarget(centerCan.transform.position));
-        yield return new WaitForSeconds(waitTime);
+        
+        // Animacja podnoszenia puszki
+       // if (anim != null) anim.SetTrigger("Interact");
+        //yield return new WaitForSeconds(waitTime);
 
         Rigidbody canRb = centerCan.GetComponent<Rigidbody>();
         if (canRb != null)
@@ -168,6 +185,9 @@ public class EnemyScript : MonoBehaviour
         centerCan.transform.localRotation = Quaternion.identity;
 
         yield return StartCoroutine(MoveToTarget(socket.transform.position));
+        
+        // Animacja odkładania puszki
+        if (anim != null) anim.SetTrigger("Interact");
         yield return new WaitForSeconds(waitTime);
 
         centerCan.transform.SetParent(null);
@@ -198,6 +218,9 @@ public class EnemyScript : MonoBehaviour
         float currentSpeed = 0f;
         float acceleration = Random.Range(1.5f, 4.0f);
 
+        // Odpalamy animację biegu
+        if (anim != null) anim.SetBool("isRunning", true);
+
         while (Vector3.Distance(transform.position, targetXZ) > 0.05f)
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, moveSpeed, acceleration * Time.deltaTime);
@@ -214,7 +237,11 @@ public class EnemyScript : MonoBehaviour
 
             yield return null;
         }
+        
         transform.position = targetXZ;
+        
+        // Wyłączamy animację biegu po dotarciu na miejsce
+        if (anim != null) anim.SetBool("isRunning", false);
     }
 
     IEnumerator RotateTowards(Vector3 targetPosition)
