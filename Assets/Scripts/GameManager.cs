@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -20,6 +21,9 @@ public class GameManager : MonoBehaviour
     public float playersDrinkLeft;
     public float enemyDrinkLeft;
     public static bool hasPlayerWon;
+    [SerializeField] private TextMeshProUGUI playersDrinkValue;
+    [SerializeField] private TextMeshProUGUI enemyDrinkValue;
+
     private void Awake()
     {
         if (Instance == null)
@@ -99,5 +103,12 @@ public class GameManager : MonoBehaviour
             hasPlayerWon = false;
             SceneManager.LoadScene("Finished");
         }
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        playersDrinkValue.text = "Gracz: " + Mathf.RoundToInt(playersDrinkLeft) + "%";
+        enemyDrinkValue.text = "Przeciwnik: " + Mathf.RoundToInt(enemyDrinkLeft) + "%";
     }
 }
