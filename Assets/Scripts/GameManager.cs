@@ -80,6 +80,7 @@ public class GameManager : MonoBehaviour
 
     public void SwitchDrinkVisibility(bool state)
     {
+        playersDrink.GetComponent<DrinkingMinigame>().pressure = 0f;
         playersDrink.SetActive(state);
     }
 

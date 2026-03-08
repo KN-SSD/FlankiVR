@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private InputActionProperty restartButtonAction;
     [SerializeField] private TextMeshProUGUI finishedText;
 
+
+
     private void OnEnable()
     {
         restartButtonAction.action.Enable();
@@ -31,6 +33,7 @@ public class UIManager : MonoBehaviour
 
     public void PlayGame()
     {
+        
         SceneManager.LoadScene("Flanki");
     }
 
@@ -52,5 +55,4 @@ public class UIManager : MonoBehaviour
 
         }
     }
-
 }

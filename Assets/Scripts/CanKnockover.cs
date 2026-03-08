@@ -42,7 +42,7 @@ public class CanKnockover : MonoBehaviour
         rb.useGravity = true;
 
         Vector3 impactDir = collision.relativeVelocity.normalized;
-        rb.AddForce((impactDir + Vector3.up) * knockoutForce, ForceMode.Impulse);
+        rb.AddForce((impactDir + Vector3.forward) * knockoutForce, ForceMode.Impulse);
 
         Debug.Log("Puszka wybita! Socket uśpiony.");
 
