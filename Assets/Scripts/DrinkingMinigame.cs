@@ -104,6 +104,7 @@ public class DrinkingMinigame : MonoBehaviour
     {
         pressure -= pressureDecay * Time.deltaTime;
         pressure = Mathf.Clamp(pressure, 0f, 100f);
+        ControllerHaptic.StartHaptic(pressure/100f, 0.1f);
     }
 
     void StartChoke()

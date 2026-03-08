@@ -215,33 +215,34 @@ public class EnemyScript : MonoBehaviour
     {
         Vector3 targetXZ = new Vector3(targetPosition.x, transform.position.y, targetPosition.z);
         
-        float currentSpeed = 0f;
-        float acceleration = Random.Range(1.5f, 4.0f);
-
-        // Odpalamy animację biegu
-        if (anim != null) anim.SetBool("isRunning", true);
-
-        while (Vector3.Distance(transform.position, targetXZ) > 0.05f)
+        if (Vector3.Distance(transform.position, targetXZ) > 0.1f)
         {
-            currentSpeed = Mathf.MoveTowards(currentSpeed, moveSpeed, acceleration * Time.deltaTime);
+            float currentSpeed = 0f;
+            float acceleration = Random.Range(1.5f, 4.0f);
 
-            Vector3 direction = (targetXZ - transform.position).normalized;
-            if (direction != Vector3.zero)
+            if (anim != null) anim.SetBool("isRunning", true);
+
+            while (Vector3.Distance(transform.position, targetXZ) > 0.1f)
             {
-                Vector3 lookDirection = isModelBackwards ? -direction : direction;
-                Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                currentSpeed = Mathf.MoveTowards(currentSpeed, moveSpeed, acceleration * Time.deltaTime);
+
+                Vector3 direction = (targetXZ - transform.position).normalized;
+                if (direction != Vector3.zero)
+                {
+                    Vector3 lookDirection = isModelBackwards ? -direction : direction;
+                    Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                }
+
+                transform.position = Vector3.MoveTowards(transform.position, targetXZ, currentSpeed * Time.deltaTime);
+
+                yield return null;
             }
-
-            transform.position = Vector3.MoveTowards(transform.position, targetXZ, currentSpeed * Time.deltaTime);
-
-            yield return null;
+            
+            if (anim != null) anim.SetBool("isRunning", false);
         }
         
         transform.position = targetXZ;
-        
-        // Wyłączamy animację biegu po dotarciu na miejsce
-        if (anim != null) anim.SetBool("isRunning", false);
     }
 
     IEnumerator RotateTowards(Vector3 targetPosition)

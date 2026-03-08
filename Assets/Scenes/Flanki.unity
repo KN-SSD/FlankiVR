@@ -1725,15 +1725,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 825412019c662ed4f98151f5e664b2ca, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.45
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 825412019c662ed4f98151f5e664b2ca, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.45
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 825412019c662ed4f98151f5e664b2ca, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.45
+      value: 0.55
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 825412019c662ed4f98151f5e664b2ca, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1783,6 +1783,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: d526a983852d4fe47af352b45f53c7a3, type: 2}
+    - target: {fileID: -6352557925341939285, guid: 825412019c662ed4f98151f5e664b2ca, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -5477749408508380018, guid: 825412019c662ed4f98151f5e664b2ca, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.041
@@ -4076,7 +4080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b0eb95556a224d4e86bfec3d4cc5fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  botHand: {fileID: 1598464374}
+  botHand: {fileID: 1720780558}
   centerCan: {fileID: 1763700402}
   socket: {fileID: 574560824}
   moveSpeed: 3
@@ -5480,6 +5484,11 @@ MonoBehaviour:
   distance: 3
   fixedY: 0.6
   smoothSpeed: 5
+--- !u!4 &1720780558 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6840940144080482467, guid: 825412019c662ed4f98151f5e664b2ca, type: 3}
+  m_PrefabInstance: {fileID: 549606331}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1759272989
 GameObject:
   m_ObjectHideFlags: 0
@@ -5861,7 +5870,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   rockTag: Rock
-  knockoutForce: 0.02
+  knockoutForce: 0.05
 --- !u!65 &1763700411
 BoxCollider:
   m_ObjectHideFlags: 0
