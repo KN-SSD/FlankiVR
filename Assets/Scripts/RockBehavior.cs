@@ -14,7 +14,7 @@ public class RockBehavior : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("RockHolder"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("RockHolder"))
             return;
 
         if (collision.relativeVelocity.magnitude < 0.5f)
@@ -28,12 +28,30 @@ public class RockBehavior : MonoBehaviour
     {
         trail.enabled = false;
         isTimerRunning = true;
-        yield return new WaitForSeconds(3f); 
 
-        if(!GameManager.Instance.isCanDown)
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        float elapsedTime = 0f;
+        float decelerateDuration = 2f;
+
+        while (elapsedTime < decelerateDuration)
         {
-            GameManager.Instance.SwitchTurnAfterThrow();
+            elapsedTime += Time.deltaTime;
+
+            rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, Vector3.zero, Time.deltaTime * 2f);
+            rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime * 2f);
+
+            yield return null;
         }
+
+        // rb.linearVelocity = Vector3.zero;
+        // rb.angularVelocity = Vector3.zero;
+
+        yield return new WaitForSeconds(1f);
+
+
+        if (!GameManager.Instance.isCanDown)
+            GameManager.Instance.SwitchTurnAfterThrow();
 
         isTimerRunning = false;
         Destroy(gameObject);
