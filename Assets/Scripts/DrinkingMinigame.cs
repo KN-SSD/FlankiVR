@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI; 
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(XRGrabInteractable))]
 public class DrinkingMinigame : MonoBehaviour
@@ -25,6 +26,8 @@ public class DrinkingMinigame : MonoBehaviour
     [SerializeField] private AudioSource drinkAudioSource; 
     private XRGrabInteractable grab;
     private Transform headCamera;
+    [SerializeField] private VisualEffect drinkingEffect;
+
 
     void Start()
     {
@@ -68,12 +71,14 @@ public class DrinkingMinigame : MonoBehaviour
 
     void ProcessDrinking()
     {
+       
         if (pressure > 0f && GameManager.Instance.playersDrinkLeft > 0f)
         {
             float currentDrinkSpeed = (pressure / maxPressure) * maxDrinkingRate;
             GameManager.Instance.playersDrinkLeft -= currentDrinkSpeed * Time.deltaTime;
 
             PlayDrinkingSound();
+             drinkingEffect.SendEvent("StartDrinking");
 
             if (GameManager.Instance.playersDrinkLeft <= 0f)
             {
@@ -124,6 +129,7 @@ public class DrinkingMinigame : MonoBehaviour
     {
         if (drinkAudioSource != null && drinkAudioSource.isPlaying)
         {
+            drinkingEffect.SendEvent("StopDrinking");
             drinkAudioSource.Pause(); 
         }
     }

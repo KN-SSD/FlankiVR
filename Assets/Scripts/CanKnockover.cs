@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.VFX;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -8,7 +9,6 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 public class CanKnockover : MonoBehaviour
 {
     [Header("Ustawienia")]
-    public string rockTag = "Rock"; 
     public float knockoutForce = 5f; 
 
     private XRGrabInteractable grab;
@@ -16,6 +16,7 @@ public class CanKnockover : MonoBehaviour
 
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip[] upadki;
+    [SerializeField] private GameObject hitEffect;
 
     void Awake()
     {
@@ -25,10 +26,16 @@ public class CanKnockover : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag(rockTag))
+        if (collision.gameObject.CompareTag("Rock"))
         {
             if (grab.isSelected && grab.firstInteractorSelecting is XRSocketInteractor socket)
             {
+                GameObject effetct = Instantiate(hitEffect.gameObject, collision.gameObject.transform.position,Quaternion.identity);
+
+                VisualEffect eff = effetct.GetComponent<VisualEffect>();
+                eff.SendEvent("OnPlay");
+               Destroy(effetct,1);
+
                 StartCoroutine(DisableSocketAndYeet(socket, collision));
             }
         }
