@@ -2,14 +2,20 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEditor;
 
 public class UIManager : MonoBehaviour
 {
     [Header("Input Setup")]
     [Tooltip("Assign the Input Action for the X button here.")]
     [SerializeField] private InputActionProperty restartButtonAction;
-    [SerializeField] private TextMeshProUGUI finishedText;
+    [SerializeField] private GameObject wonImage;
+    [SerializeField] private GameObject lostImage;
 
+
+    [SerializeField] private GameObject menuPanel;
+
+    [SerializeField] private GameObject creditsPanel;
 
 
     private void OnEnable()
@@ -42,6 +48,18 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene("Menu");
     }
 
+    public void ShowCredits()
+    {
+        menuPanel.SetActive(false);
+        creditsPanel.SetActive(true);
+    }
+
+    public void HideCredits()
+    {
+         menuPanel.SetActive(true);
+        creditsPanel.SetActive(false);
+    }
+
     void Awake()
     {
         Scene scene = SceneManager.GetActiveScene();
@@ -49,9 +67,10 @@ public class UIManager : MonoBehaviour
         if (scene.name == "Finished")
         {
             if (GameManager.hasPlayerWon)
-                finishedText.text = "Wygrałeś!";
+                wonImage.SetActive(true);
             else    
-                finishedText.text = "Przegrałeś!";
+                lostImage.SetActive(true);
+                
 
         }
     }
