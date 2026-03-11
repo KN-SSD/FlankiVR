@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     public float playersDrinkLeft;
     public float enemyDrinkLeft;
     public static bool hasPlayerWon;
-    [SerializeField] private Slider playersDrinkSlider;
+    [SerializeField] private Image bottleImage;
 
     private void Awake()
     {
@@ -107,6 +107,6 @@ public class GameManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        playersDrinkSlider.value = playersDrinkLeft;
+        bottleImage.fillAmount = playersDrinkLeft/100;
     }
 }
