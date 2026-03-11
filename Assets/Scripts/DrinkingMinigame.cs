@@ -7,18 +7,14 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 public class DrinkingMinigame : MonoBehaviour
 {
     [Header("--- Stan Napoju ---")]
-    public float drinkingRate = 15f;        
+    [Tooltip("Maksymalna prędkość picia, osiągana przy pełnym spamowaniu")]
+    public float maxDrinkingRate = 25f;        
 
     [Header("--- Mechanika Spamowania ---")]
     public float pressure = 0f;             
+    public float maxPressure = 100f; // Twardy limit ciśnienia (i prędkości picia)
     public float pressureGain = 15f;        
     public float pressureDecay = 25f;       
-    
-    [Header("--- Strefy Paska (0-100) ---")]
-    public float goodZoneMin = 40f;         
-    public float goodZoneMax = 75f;        
-    public float chokeThreshold = 95f;      
-    public float chokePenaltyTime = 2.0f;   
 
     [Header("--- Wykrywanie Ust ---")]
     public float headDistanceLimit = 0.3f;  
@@ -27,14 +23,10 @@ public class DrinkingMinigame : MonoBehaviour
 
     [Header("--- UI i Input ---")]
     public Slider liquidSlider;             
-    public Slider pressureSlider;           
-    public Image pressureFillColor;         
     public InputActionProperty triggerInput; 
 
     private XRGrabInteractable grab;
     private Transform headCamera;
-    private bool isChoked = false;
-    private float chokeTimer = 0f;
 
     void Start()
     {
@@ -42,7 +34,6 @@ public class DrinkingMinigame : MonoBehaviour
         if (Camera.main != null) headCamera = Camera.main.transform;
 
         if (liquidSlider) liquidSlider.maxValue = GameManager.Instance.playersDrinkLeft;
-        if (pressureSlider) pressureSlider.maxValue = 100f;
     }
 
     void OnEnable() 
@@ -55,17 +46,14 @@ public class DrinkingMinigame : MonoBehaviour
         DecayPressure();
         UpdateUI();
 
-        if (isChoked)
-        {
-            HandleChokeTimer();
-            return; 
-        }
-
         if (!grab.isSelected) return;
 
+        // Nabijanie ciśnienia przy każdym wciśnięciu
         if (triggerInput.action.WasPressedThisFrame())
         {
             pressure += pressureGain;
+            // Blokujemy ciśnienie na maksymalnym poziomie (żeby nie rosło w nieskończoność)
+            pressure = Mathf.Min(pressure, maxPressure);
         }
 
         if (IsCanAtMouth())
@@ -76,13 +64,18 @@ public class DrinkingMinigame : MonoBehaviour
 
     void ProcessDrinking()
     {
-        if (pressure > chokeThreshold)
+        if (pressure > 0f)
         {
-            StartChoke();
-        }
-        else if (pressure >= goodZoneMin && pressure <= goodZoneMax)
-        {
-            GameManager.Instance.playersDrinkLeft -= drinkingRate * Time.deltaTime;
+            // Prędkość picia to procent z maxDrinkingRate (od 0 do 100% maxa)
+            float currentDrinkSpeed = (pressure / maxPressure) * maxDrinkingRate;
+            
+            GameManager.Instance.playersDrinkLeft -= currentDrinkSpeed * Time.deltaTime;
+
+            // Zabezpieczenie przed ujemną wartością napoju
+            if (GameManager.Instance.playersDrinkLeft < 0f)
+            {
+                GameManager.Instance.playersDrinkLeft = 0f;
+            }
         }
     }
 
@@ -91,9 +84,7 @@ public class DrinkingMinigame : MonoBehaviour
         if (headCamera == null) return false;
 
         float distanceToHead = Vector3.Distance(transform.position, headCamera.position);
-        
-        bool heightOK = transform.position.y > (headCamera.position.y - 0.25f);
-
+        bool heightOK = transform.position.y > (headCamera.position.y - heightOffset);
         float angle = Vector3.Angle(transform.up, Vector3.up); 
         bool tiltOK = angle > requiredTilt;
 
@@ -103,42 +94,14 @@ public class DrinkingMinigame : MonoBehaviour
     void DecayPressure()
     {
         pressure -= pressureDecay * Time.deltaTime;
-        pressure = Mathf.Clamp(pressure, 0f, 100f);
-        ControllerHaptic.StartHaptic(pressure/100f, 0.1f);
-    }
-
-    void StartChoke()
-    {
-        isChoked = true;
-        chokeTimer = chokePenaltyTime;
-        pressure = 0f; 
-        Debug.Log("ZAKRZTUSIŁEŚ SIĘ! (BLOKADA)");
+        pressure = Mathf.Clamp(pressure, 0f, maxPressure);
         
-        if (pressureFillColor) pressureFillColor.color = Color.red;
-    }
-
-    void HandleChokeTimer()
-    {
-        chokeTimer -= Time.deltaTime;
-        if (chokeTimer <= 0)
-        {
-            isChoked = false;
-        }
+        // Wibracja też jest teraz dostosowana do nowego maxPressure
+        ControllerHaptic.StartHaptic(pressure / maxPressure, 0.1f);
     }
 
     void UpdateUI()
     {
         if (liquidSlider) liquidSlider.value = GameManager.Instance.playersDrinkLeft;
-        if (pressureSlider) pressureSlider.value = pressure;
-
-        if (pressureFillColor && !isChoked)
-        {
-            if (pressure >= goodZoneMin && pressure <= goodZoneMax)
-                pressureFillColor.color = Color.green; 
-            else if (pressure > goodZoneMax)
-                pressureFillColor.color = new Color(1f, 0.5f, 0f); 
-            else
-                pressureFillColor.color = Color.yellow; 
-        }
     }
 }

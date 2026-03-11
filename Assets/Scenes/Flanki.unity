@@ -681,7 +681,10 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
-  finishedText: {fileID: 0}
+  wonImage: {fileID: 0}
+  lostImage: {fileID: 0}
+  menuPanel: {fileID: 0}
+  creditsPanel: {fileID: 0}
 --- !u!1 &100638707
 GameObject:
   m_ObjectHideFlags: 0
@@ -2174,6 +2177,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8877177980677234388, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
       propertyPath: m_EnableFarCasting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9124527054769015467, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9173983156334026967, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}
@@ -5498,20 +5505,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e46cb708481cc78489536fa0dfb2e32f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  drinkingRate: 20
+  maxDrinkingRate: 25
   pressure: 0
+  maxPressure: 100
   pressureGain: 10
   pressureDecay: 25
-  goodZoneMin: 30
-  goodZoneMax: 75
-  chokeThreshold: 90
-  chokePenaltyTime: 2
-  headDistanceLimit: 0.3
+  headDistanceLimit: 0.5
   heightOffset: 0.15
-  requiredTilt: 30
+  requiredTilt: 15
   liquidSlider: {fileID: 1028423074}
-  pressureSlider: {fileID: 65959545}
-  pressureFillColor: {fileID: 511801385}
   triggerInput:
     m_UseReference: 0
     m_Action:
@@ -5698,7 +5700,10 @@ MonoBehaviour:
         m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 0}
-  finishedText: {fileID: 0}
+  wonImage: {fileID: 0}
+  lostImage: {fileID: 0}
+  menuPanel: {fileID: 0}
+  creditsPanel: {fileID: 0}
 --- !u!114 &747597968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6173,13 +6178,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 888961027}
   serializedVersion: 2
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.1942395, y: -0.23935336, z: -0.9285435, w: 0.20685239}
+  m_LocalPosition: {x: 0.139, y: 0.32899976, z: 0.18600002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 638148653}
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 201.355, y: 150.42, z: 30.817001}
 --- !u!1 &907056432
 GameObject:
   m_ObjectHideFlags: 0
@@ -7141,6 +7146,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: e0e11870bd4d1c74fa0976452377e7c7, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: e0e11870bd4d1c74fa0976452377e7c7, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 854985dfc62a9ea4c8aab211aafa0e00, type: 2}
@@ -7445,13 +7454,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1172994458}
   serializedVersion: 2
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: -1, w: 0}
+  m_LocalPosition: {x: 0.343, y: 0, z: -0.061}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1763700406}
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 180, z: 0}
 --- !u!1 &1193150133
 GameObject:
   m_ObjectHideFlags: 0
@@ -9068,7 +9077,10 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
-  finishedText: {fileID: 0}
+  wonImage: {fileID: 0}
+  lostImage: {fileID: 0}
+  menuPanel: {fileID: 0}
+  creditsPanel: {fileID: 0}
 --- !u!114 &1710506177
 MonoBehaviour:
   m_ObjectHideFlags: 0
