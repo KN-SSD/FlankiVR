@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -21,8 +22,7 @@ public class GameManager : MonoBehaviour
     public float playersDrinkLeft;
     public float enemyDrinkLeft;
     public static bool hasPlayerWon;
-    [SerializeField] private TextMeshProUGUI playersDrinkValue;
-    [SerializeField] private TextMeshProUGUI enemyDrinkValue;
+    [SerializeField] private Slider playersDrinkSlider;
 
     private void Awake()
     {
@@ -76,8 +76,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-
     public void SwitchDrinkVisibility(bool state)
     {
         playersDrink.GetComponent<DrinkingMinigame>().pressure = 0f;
@@ -109,7 +107,6 @@ public class GameManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        playersDrinkValue.text = "Gracz: " + Mathf.RoundToInt(playersDrinkLeft) + "%";
-        enemyDrinkValue.text = "Przeciwnik: " + Mathf.RoundToInt(enemyDrinkLeft) + "%";
+        playersDrinkSlider.value = playersDrinkLeft;
     }
 }

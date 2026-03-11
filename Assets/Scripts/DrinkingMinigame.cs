@@ -6,25 +6,23 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 [RequireComponent(typeof(XRGrabInteractable))]
 public class DrinkingMinigame : MonoBehaviour
 {
-    [Header("--- Stan Napoju ---")]
-    [Tooltip("Maksymalna prędkość picia, osiągana przy pełnym spamowaniu")]
-    public float maxDrinkingRate = 25f;        
+    [SerializeField] private float maxDrinkingRate = 25f;        
 
     [Header("--- Mechanika Spamowania ---")]
     public float pressure = 0f;             
-    public float maxPressure = 100f; // Twardy limit ciśnienia (i prędkości picia)
-    public float pressureGain = 15f;        
-    public float pressureDecay = 25f;       
+    [SerializeField] private float maxPressure = 100f; 
+    [SerializeField] private float pressureGain = 15f;        
+    [SerializeField] private float pressureDecay = 25f;       
 
     [Header("--- Wykrywanie Ust ---")]
-    public float headDistanceLimit = 0.3f;  
-    public float heightOffset = 0.15f;      
-    public float requiredTilt = 80f;        
+    [SerializeField] private float headDistanceLimit = 0.3f;  
+    [SerializeField] private float heightOffset = 0.15f;      
+    [SerializeField] private float requiredTilt = 80f;        
 
-    [Header("--- UI i Input ---")]
-    public Slider liquidSlider;             
-    public InputActionProperty triggerInput; 
-
+    [Header("--- UI, Input i Audio ---")]
+    [SerializeField] private Slider liquidSlider;             
+    [SerializeField] private InputActionProperty triggerInput; 
+    [SerializeField] private AudioSource drinkAudioSource; 
     private XRGrabInteractable grab;
     private Transform headCamera;
 
@@ -46,13 +44,15 @@ public class DrinkingMinigame : MonoBehaviour
         DecayPressure();
         UpdateUI();
 
-        if (!grab.isSelected) return;
+        if (!grab.isSelected)
+        {
+            StopDrinkingSound();
+            return;
+        }
 
-        // Nabijanie ciśnienia przy każdym wciśnięciu
         if (triggerInput.action.WasPressedThisFrame())
         {
             pressure += pressureGain;
-            // Blokujemy ciśnienie na maksymalnym poziomie (żeby nie rosło w nieskończoność)
             pressure = Mathf.Min(pressure, maxPressure);
         }
 
@@ -60,22 +60,30 @@ public class DrinkingMinigame : MonoBehaviour
         {
             ProcessDrinking();
         }
+        else
+        {
+            StopDrinkingSound();
+        }
     }
 
     void ProcessDrinking()
     {
-        if (pressure > 0f)
+        if (pressure > 0f && GameManager.Instance.playersDrinkLeft > 0f)
         {
-            // Prędkość picia to procent z maxDrinkingRate (od 0 do 100% maxa)
             float currentDrinkSpeed = (pressure / maxPressure) * maxDrinkingRate;
-            
             GameManager.Instance.playersDrinkLeft -= currentDrinkSpeed * Time.deltaTime;
 
-            // Zabezpieczenie przed ujemną wartością napoju
-            if (GameManager.Instance.playersDrinkLeft < 0f)
+            PlayDrinkingSound();
+
+            if (GameManager.Instance.playersDrinkLeft <= 0f)
             {
                 GameManager.Instance.playersDrinkLeft = 0f;
+                StopDrinkingSound(); 
             }
+        }
+        else
+        {
+            StopDrinkingSound(); 
         }
     }
 
@@ -96,12 +104,27 @@ public class DrinkingMinigame : MonoBehaviour
         pressure -= pressureDecay * Time.deltaTime;
         pressure = Mathf.Clamp(pressure, 0f, maxPressure);
         
-        // Wibracja też jest teraz dostosowana do nowego maxPressure
         ControllerHaptic.StartHaptic(pressure / maxPressure, 0.1f);
     }
 
     void UpdateUI()
     {
         if (liquidSlider) liquidSlider.value = GameManager.Instance.playersDrinkLeft;
+    }
+
+    private void PlayDrinkingSound()
+    {
+        if (drinkAudioSource != null && !drinkAudioSource.isPlaying)
+        {
+            drinkAudioSource.Play();
+        }
+    }
+
+    private void StopDrinkingSound()
+    {
+        if (drinkAudioSource != null && drinkAudioSource.isPlaying)
+        {
+            drinkAudioSource.Pause(); 
+        }
     }
 }

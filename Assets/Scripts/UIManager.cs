@@ -11,6 +11,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private InputActionProperty restartButtonAction;
     [SerializeField] private GameObject wonImage;
     [SerializeField] private GameObject lostImage;
+    [SerializeField] private AudioSource finishedAudioSource;
+    [SerializeField] private AudioClip win;
+    [SerializeField] private AudioClip lose;
 
 
     [SerializeField] private GameObject menuPanel;
@@ -39,7 +42,7 @@ public class UIManager : MonoBehaviour
 
     public void PlayGame()
     {
-        
+
         SceneManager.LoadScene("Flanki");
     }
 
@@ -56,7 +59,7 @@ public class UIManager : MonoBehaviour
 
     public void HideCredits()
     {
-         menuPanel.SetActive(true);
+        menuPanel.SetActive(true);
         creditsPanel.SetActive(false);
     }
 
@@ -67,10 +70,18 @@ public class UIManager : MonoBehaviour
         if (scene.name == "Finished")
         {
             if (GameManager.hasPlayerWon)
+            {
                 wonImage.SetActive(true);
-            else    
+                finishedAudioSource.clip = win;
+                finishedAudioSource.Play();
+            }
+            else
+            {
                 lostImage.SetActive(true);
-                
+                finishedAudioSource.clip = lose;
+                finishedAudioSource.Play();
+            }
+
 
         }
     }
