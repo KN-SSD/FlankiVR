@@ -5,18 +5,19 @@ using UnityEngine.XR.Interaction.Toolkit;
 [RequireComponent(typeof(CharacterController))]
 public class ArmSwingRunner : MonoBehaviour
 {
-   [Header("Fizyka Biegu")]
-    public float maxSpeed = 8.0f;
-    public float acceleration = 10.0f;
-    public float deceleration = 15.0f;
+    [Header("Fizyka Biegu")]
+    [SerializeField] private float maxSpeed = 8.0f;
+    [SerializeField] private float acceleration = 10.0f;
+    [SerializeField] private float deceleration = 15.0f;
 
     [Header("Wymagania Ruchu")]
-    public float minHandMove = 0.02f; 
+    [SerializeField] private float minHandMove = 0.02f; 
 
-    [Header("Ręce i Input")]
-    public Transform leftHand;
-    public Transform rightHand;
-    public InputActionProperty triggerPress;
+    [Header("Ręce, Input i Audio")]
+    [SerializeField] private Transform leftHand;
+    [SerializeField] private Transform rightHand;
+    [SerializeField] private InputActionProperty triggerPress;
+    [SerializeField] private AudioSource runningAudioSource; 
 
     private CharacterController characterController;
     private Transform headCamera;
@@ -46,12 +47,12 @@ public class ArmSwingRunner : MonoBehaviour
 
     void Update()
     {
+        if (leftHand == null || rightHand == null) return;
+
         float leftDeltaY = leftHand.position.y - prevLeftPos.y;
         float rightDeltaY = rightHand.position.y - prevRightPos.y;
 
         bool isTriggerPressed = triggerPress.action.ReadValue<float>() > 0.1f;
-        
-
         
         bool isAlternating = (leftDeltaY * rightDeltaY) < 0;
 
@@ -75,6 +76,12 @@ public class ArmSwingRunner : MonoBehaviour
             forwardDir.y = 0;
             forwardDir.Normalize();
             characterController.Move(forwardDir * currentSpeed * Time.deltaTime);
+
+            PlayRunningSound();
+        }
+        else
+        {
+            StopRunningSound();
         }
 
         prevLeftPos = leftHand.position;
@@ -98,6 +105,22 @@ public class ArmSwingRunner : MonoBehaviour
         else
         {
             return false;
+        }
+    }
+
+    private void PlayRunningSound()
+    {
+        if (runningAudioSource != null && !runningAudioSource.isPlaying)
+        {
+            runningAudioSource.Play();
+        }
+    }
+
+    private void StopRunningSound()
+    {
+        if (runningAudioSource != null && runningAudioSource.isPlaying)
+        {
+            runningAudioSource.Pause(); 
         }
     }
 }

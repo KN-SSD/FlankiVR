@@ -1,15 +1,51 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.VFX;
+using UnityEngine.XR.Interaction.Toolkit.Interactables; 
 
+[RequireComponent(typeof(Rigidbody), typeof(XRGrabInteractable))]
 public class RockBehavior : MonoBehaviour
 {
-    private bool isTimerRunning = false;
     [SerializeField] private TrailRenderer trail;
+    [SerializeField] private AudioSource throwAudioSource; 
+    [SerializeField] private AudioClip[] throwSounds;
+
+    [SerializeField] private float minThrowVelocity = 2.0f; 
+
+    private bool isTimerRunning = false;
+    private bool hasPlayedThrowSound = false; 
+
+    private XRGrabInteractable grabInteractable;
+    private Rigidbody rb;
 
     void Start()
     {
         trail = GetComponent<TrailRenderer>();
+        grabInteractable = GetComponent<XRGrabInteractable>();
+        rb = GetComponent<Rigidbody>();
+    }
+
+    void Update()
+    {
+        if (grabInteractable.isSelected)
+        {
+            hasPlayedThrowSound = false;
+            return; 
+        }
+
+        if (!hasPlayedThrowSound && rb.linearVelocity.magnitude >= minThrowVelocity)
+        {
+            PlayThrowSound();
+            hasPlayedThrowSound = true; 
+        }
+    }
+
+    private void PlayThrowSound()
+    {
+        if (throwAudioSource != null && !throwAudioSource.isPlaying)
+        {
+            throwAudioSource.clip = throwSounds[Random.Range(0,throwSounds.Length)];
+            throwAudioSource.Play();
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -26,10 +62,8 @@ public class RockBehavior : MonoBehaviour
 
     IEnumerator CheckMiss()
     {
-        trail.enabled = false;
+        if (trail != null) trail.enabled = false;
         isTimerRunning = true;
-
-        Rigidbody rb = GetComponent<Rigidbody>();
 
         float elapsedTime = 0f;
         float decelerateDuration = 2f;
@@ -44,11 +78,7 @@ public class RockBehavior : MonoBehaviour
             yield return null;
         }
 
-        // rb.linearVelocity = Vector3.zero;
-        // rb.angularVelocity = Vector3.zero;
-
         yield return new WaitForSeconds(1f);
-
 
         if (!GameManager.Instance.isCanDown)
             GameManager.Instance.SwitchTurnAfterThrow();

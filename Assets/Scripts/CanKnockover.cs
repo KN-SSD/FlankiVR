@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -14,6 +13,9 @@ public class CanKnockover : MonoBehaviour
 
     private XRGrabInteractable grab;
     private Rigidbody rb;
+
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip[] upadki;
 
     void Awake()
     {
@@ -41,6 +43,9 @@ public class CanKnockover : MonoBehaviour
         rb.isKinematic = false;
         rb.useGravity = true;
 
+        audioSource.clip = upadki[Random.Range(0,upadki.Length)];
+        audioSource.Play();
+        
         Vector3 impactDir = collision.relativeVelocity.normalized;
         rb.AddForce((impactDir + Vector3.forward) * knockoutForce, ForceMode.Impulse);
 
