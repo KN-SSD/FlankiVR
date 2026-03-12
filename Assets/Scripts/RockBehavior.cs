@@ -5,14 +5,24 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 [RequireComponent(typeof(Rigidbody), typeof(XRGrabInteractable))]
 public class RockBehavior : MonoBehaviour
 {
+    [Header("--- Efekty i Audio ---")]
     [SerializeField] private TrailRenderer trail;
     [SerializeField] private AudioSource throwAudioSource; 
     [SerializeField] private AudioClip[] throwSounds;
 
+    [Header("--- Ustawienia Rzutu i Fizyki ---")]
     [SerializeField] private float minThrowVelocity = 2.0f; 
+    [Tooltip("Kaganiec na fizykę VR - zapobiega lotom kamienia w kosmos")]
+    [SerializeField] private float maxThrowVelocity = 15.0f; 
+
+    [Header("--- Lewitacja (Podążanie) ---")]
+    [SerializeField] private Transform headCamera; 
+    [SerializeField] private Vector3 hoverOffset = new Vector3(0.3f, -0.4f, 0.4f); 
+    [SerializeField] private float hoverSpeed = 8f; 
 
     private bool isTimerRunning = false;
     private bool hasPlayedThrowSound = false; 
+    private bool isLevitating; 
 
     private XRGrabInteractable grabInteractable;
     private Rigidbody rb;
@@ -22,34 +32,79 @@ public class RockBehavior : MonoBehaviour
         trail = GetComponent<TrailRenderer>();
         grabInteractable = GetComponent<XRGrabInteractable>();
         rb = GetComponent<Rigidbody>();
+        
+        if (headCamera == null && Camera.main != null) 
+            headCamera = Camera.main.transform;
+
+        if (GameManager.Instance != null && !GameManager.Instance.isPlayersTurn)
+        {
+            isLevitating = false;
+            rb.useGravity = true;
+        }
+        else
+        {
+            isLevitating = true;
+            rb.useGravity = false;
+        }
+        
+        rb.isKinematic = false; 
     }
 
     void Update()
     {
         if (grabInteractable.isSelected)
         {
+            isLevitating = false; 
             hasPlayedThrowSound = false;
             return; 
         }
 
-        if (!hasPlayedThrowSound && rb.linearVelocity.magnitude >= minThrowVelocity)
+        if (isLevitating && headCamera != null)
         {
-            PlayThrowSound();
-            hasPlayedThrowSound = true; 
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.useGravity = false;
+
+            float yawY = headCamera.eulerAngles.y;
+            Quaternion bodyRotation = Quaternion.Euler(0, yawY, 0);
+            Vector3 targetPosition = headCamera.position + (bodyRotation * hoverOffset);
+
+            transform.position = Vector3.Lerp(transform.position, targetPosition, hoverSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, bodyRotation, hoverSpeed * Time.deltaTime);
+            
+            return; 
+        }
+
+        if (!isLevitating)
+        {
+            if (!rb.useGravity) rb.useGravity = true;
+
+            if (rb.linearVelocity.magnitude > maxThrowVelocity)
+            {
+                rb.linearVelocity = rb.linearVelocity.normalized * maxThrowVelocity;
+            }
+
+            if (!hasPlayedThrowSound && rb.linearVelocity.magnitude >= minThrowVelocity)
+            {
+                PlayThrowSound();
+                hasPlayedThrowSound = true; 
+            }
         }
     }
 
     private void PlayThrowSound()
     {
-        if (throwAudioSource != null && !throwAudioSource.isPlaying)
+        if (throwAudioSource != null && !throwAudioSource.isPlaying && throwSounds != null && throwSounds.Length > 0)
         {
-            throwAudioSource.clip = throwSounds[Random.Range(0,throwSounds.Length)];
+            throwAudioSource.clip = throwSounds[Random.Range(0, throwSounds.Length)];
             throwAudioSource.Play();
         }
     }
 
     void OnCollisionEnter(Collision collision)
     {
+        if (isLevitating) return; 
+
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("RockHolder"))
             return;
 
@@ -80,7 +135,7 @@ public class RockBehavior : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        if (!GameManager.Instance.isCanDown)
+        if (GameManager.Instance != null && !GameManager.Instance.isCanDown)
             GameManager.Instance.SwitchTurnAfterThrow();
 
         isTimerRunning = false;

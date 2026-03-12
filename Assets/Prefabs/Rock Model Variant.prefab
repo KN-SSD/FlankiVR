@@ -139,6 +139,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 13400000, guid: d3817866f4d71a340a53982e692c5d88, type: 2}
     - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
+      propertyPath: hoverOffset.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
+      propertyPath: hoverOffset.y
+      value: -0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
+      propertyPath: hoverOffset.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
       propertyPath: throwAudioSource
       value: 
       objectReference: {fileID: 6288828576638168094}
