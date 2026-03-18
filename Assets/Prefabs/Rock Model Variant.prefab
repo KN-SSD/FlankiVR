@@ -86,6 +86,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1173518608174968342, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
+      propertyPath: m_Mass
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 4559509727258423070, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
       propertyPath: m_AttachTransform
       value: 
@@ -140,7 +144,7 @@ PrefabInstance:
       objectReference: {fileID: 13400000, guid: d3817866f4d71a340a53982e692c5d88, type: 2}
     - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
       propertyPath: hoverOffset.x
-      value: 0.1
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
       propertyPath: hoverOffset.y
@@ -151,9 +155,17 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
+      propertyPath: minThrowVelocity
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
       propertyPath: throwAudioSource
       value: 
       objectReference: {fileID: 6288828576638168094}
+    - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
+      propertyPath: throwForceMultiplier
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7449339439645090080, guid: b05764a5a1cce0f49a445881d1f504a0, type: 3}
       propertyPath: throwSounds.Array.size
       value: 6

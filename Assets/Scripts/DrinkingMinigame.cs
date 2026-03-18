@@ -74,7 +74,7 @@ public class DrinkingMinigame : MonoBehaviour
        
         if (pressure > 0f && GameManager.Instance.playersDrinkLeft > 0f)
         {
-            float currentDrinkSpeed = ((pressure / maxPressure) * maxDrinkingRate)/2;
+            float currentDrinkSpeed = ((pressure / maxPressure) * maxDrinkingRate)/1.5f;
             GameManager.Instance.playersDrinkLeft -= currentDrinkSpeed * Time.deltaTime;
 
             PlayDrinkingSound();
