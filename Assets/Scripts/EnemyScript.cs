@@ -72,7 +72,7 @@ public class EnemyScript : MonoBehaviour
             if (GameManager.Instance.isCanDown || !GameManager.Instance.isPlayerAtHisSpot)
             {
                 shouldDrink = true;
-                float currentDrinkSpeed = Random.Range(4f, 10f);
+                float currentDrinkSpeed = Random.Range(3f, 6f);
                 GameManager.Instance.enemyDrinkLeft -= currentDrinkSpeed * Time.deltaTime;
             }
         }
