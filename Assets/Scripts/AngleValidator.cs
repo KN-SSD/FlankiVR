@@ -5,7 +5,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class AngleValidator : MonoBehaviour, IXRSelectFilter
     {
-    public float maxAngle = 45f;
+    [SerializeField] private float maxAngle = 45f;
 
     public bool canProcess => isActiveAndEnabled;
 

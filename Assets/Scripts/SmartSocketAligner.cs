@@ -6,7 +6,7 @@ public class SmartSocketAligner : MonoBehaviour
 {
     private XRSocketInteractor socket;
     
-    public Transform socketAttachPoint; 
+    [SerializeField] private Transform socketAttachPoint; 
 
     void Awake()
     {
