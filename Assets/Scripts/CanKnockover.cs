@@ -9,7 +9,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 public class CanKnockover : MonoBehaviour
 {
     [Header("Ustawienia")]
-    public float knockoutForce = 5f; 
+    [SerializeField] private float knockoutForce = 5f;
 
     private XRGrabInteractable grab;
     private Rigidbody rb;
@@ -30,11 +30,11 @@ public class CanKnockover : MonoBehaviour
         {
             if (grab.isSelected && grab.firstInteractorSelecting is XRSocketInteractor socket)
             {
-                GameObject effetct = Instantiate(hitEffect.gameObject, collision.gameObject.transform.position,Quaternion.identity);
+                GameObject effetct = Instantiate(hitEffect.gameObject, collision.gameObject.transform.position, Quaternion.identity);
 
                 VisualEffect eff = effetct.GetComponent<VisualEffect>();
                 eff.SendEvent("OnPlay");
-               Destroy(effetct,1);
+                Destroy(effetct, 1);
 
                 StartCoroutine(DisableSocketAndYeet(socket, collision));
             }
@@ -43,16 +43,15 @@ public class CanKnockover : MonoBehaviour
 
     IEnumerator DisableSocketAndYeet(XRSocketInteractor socket, Collision collision)
     {
-        
-        socket.socketActive = false; 
-        socket.enabled = false;      
+        socket.socketActive = false;
+        socket.enabled = false;
 
         rb.isKinematic = false;
         rb.useGravity = true;
 
-        audioSource.clip = upadki[Random.Range(0,upadki.Length)];
+        audioSource.clip = upadki[Random.Range(0, upadki.Length)];
         audioSource.Play();
-        
+
         Vector3 impactDir = collision.relativeVelocity.normalized;
         rb.AddForce((impactDir + Vector3.forward) * knockoutForce, ForceMode.Impulse);
 

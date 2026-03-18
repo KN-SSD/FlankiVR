@@ -17,7 +17,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private EnemyScript enemy;
     private GameObject currentRockInstance;
 
-    [Header("Drinking bars and ui")]
     private bool gameFinished;
     public float playersDrinkLeft;
     public float enemyDrinkLeft;
@@ -34,10 +33,7 @@ public class GameManager : MonoBehaviour
             enemyDrinkLeft = 100f;
         }
         else
-        {
             Destroy(gameObject);
-        }
-
     }
 
     void Start()
@@ -59,9 +55,7 @@ public class GameManager : MonoBehaviour
         SwitchDrinkVisibility(false);
 
         if (currentRockInstance == null)
-        {
             currentRockInstance = Instantiate(rock, new Vector3(0.5f, 1.07f, 0.4f), Quaternion.identity);
-        }
     }
 
     public void PlayerRunningTurn()
@@ -71,9 +65,7 @@ public class GameManager : MonoBehaviour
         SwitchDrinkVisibility(false);
 
         if (enemy != null)
-        {
             enemy.ResetThrowFlag();
-        }
     }
 
     public void SwitchDrinkVisibility(bool state)

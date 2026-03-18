@@ -6,8 +6,6 @@ using UnityEditor;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("Input Setup")]
-    [Tooltip("Assign the Input Action for the X button here.")]
     [SerializeField] private InputActionProperty restartButtonAction;
     [SerializeField] private GameObject wonImage;
     [SerializeField] private GameObject lostImage;
@@ -24,7 +22,6 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         restartButtonAction.action.Enable();
-
         restartButtonAction.action.performed += RestartScene;
     }
 
@@ -81,8 +78,6 @@ public class UIManager : MonoBehaviour
                 finishedAudioSource.clip = lose;
                 finishedAudioSource.Play();
             }
-
-
         }
     }
 }

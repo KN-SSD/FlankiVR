@@ -11,7 +11,6 @@ public class CanSnappedScript : MonoBehaviour
     void Awake()
     {
         socket = GetComponent<XRSocketInteractor>();
-       
     }
 
     void OnEnable()
@@ -23,6 +22,5 @@ public class CanSnappedScript : MonoBehaviour
     {
         GameManager.Instance.isCanDown = false;
         effect.SendEvent("CanPlaced");
-
     }
 }

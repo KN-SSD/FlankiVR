@@ -6,8 +6,8 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 public class DualAttach : MonoBehaviour
 {
     [Header("Ustawienia Punktów")]
-    public Transform handAttachPoint;   
-    public Transform socketAttachPoint; 
+    [SerializeField] private Transform handAttachPoint;   
+    [SerializeField] private Transform socketAttachPoint; 
 
     private XRGrabInteractable grabInteractable;
 
@@ -33,13 +33,9 @@ public class DualAttach : MonoBehaviour
     private void OnGrab(SelectEnterEventArgs args)
     {
         if (args.interactorObject is XRSocketInteractor)
-        {
             grabInteractable.attachTransform = socketAttachPoint;
-        }
         else
-        {
             grabInteractable.attachTransform = handAttachPoint;
-        }
     }
 
     private void OnRelease(SelectExitEventArgs args)
