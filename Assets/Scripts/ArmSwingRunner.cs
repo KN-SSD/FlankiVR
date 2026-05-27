@@ -58,14 +58,21 @@ public class ArmSwingRunner : MonoBehaviour
 
         bool leftHandActive = Mathf.Abs(leftDeltaY) > minHandMove;
         bool rightHandActive = Mathf.Abs(rightDeltaY) > minHandMove;
+        bool canRun = CanPlayerRun();
 
-        if (isTriggerPressed && isAlternating && leftHandActive && rightHandActive && CanPlayerRun())
+        if (isTriggerPressed && isAlternating && leftHandActive && rightHandActive && canRun)
         {
             currentSpeed += acceleration * Time.deltaTime;
         }
         else
         {
             currentSpeed -= deceleration * Time.deltaTime;
+        }
+        
+        // Natychmiast resetuj prędkość jeśli gracz nie może biegać
+        if (!canRun)
+        {
+            currentSpeed = 0f;
         }
 
         currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
@@ -75,7 +82,18 @@ public class ArmSwingRunner : MonoBehaviour
             Vector3 forwardDir = headCamera.forward;
             forwardDir.y = 0;
             forwardDir.Normalize();
-            characterController.Move(forwardDir * currentSpeed * Time.deltaTime);
+            
+            Vector3 moveDirection = forwardDir * currentSpeed * Time.deltaTime;
+            Vector3 newPosition = transform.position + moveDirection;
+            
+            // Granica z = 0.5 - gracz ma granicę tylko na swojej turze
+            // Na turze przeciwnika może się poruszać wszędzie
+            if (newPosition.z > 0.5f && GameManager.Instance.isPlayersTurn && transform.position.z <= 0.5f)
+            {
+                moveDirection.z = 0.5f - transform.position.z;
+            }
+            
+            characterController.Move(moveDirection);
 
             PlayRunningSound();
         }
@@ -90,15 +108,25 @@ public class ArmSwingRunner : MonoBehaviour
 
     private bool CanPlayerRun()
     {
-        if(GameManager.Instance.isPlayerAtHisSpot && GameManager.Instance.isCanDown && !GameManager.Instance.isPlayersTurn)
+        // Gracz nie może się ruszać jeśli już rzucił
+        if (GameManager.Instance.hasPlayerThrown)
+        {
+            return false;
+        }
+        
+        // Jeśli gracz jest poza swoim polem (z > 0.5), powinien móc wrócić
+        if (transform.position.z > 0.5f)
         {
             return true;
         }
-        else if(!GameManager.Instance.isPlayerAtHisSpot && GameManager.Instance.isCanDown && !GameManager.Instance.isPlayersTurn)
+        
+        // Warunek 1: Tura przeciwnika, puszka leży
+        if (GameManager.Instance.isCanDown && !GameManager.Instance.isPlayersTurn)
         {
             return true;
         }
-        else if (!GameManager.Instance.isPlayerAtHisSpot && !GameManager.Instance.isCanDown && !GameManager.Instance.isPlayersTurn)
+        // Warunek 2: Tura gracza, a gracz jeszcze nie rzucił
+        else if (GameManager.Instance.isPlayersTurn && !GameManager.Instance.hasPlayerThrown)
         {
             return true;
         }

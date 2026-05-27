@@ -1,26 +1,26 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit.Interactables; 
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 [RequireComponent(typeof(Rigidbody), typeof(XRGrabInteractable))]
 public class RockBehavior : MonoBehaviour
 {
     [SerializeField] private TrailRenderer trail;
-    [SerializeField] private AudioSource throwAudioSource; 
+    [SerializeField] private AudioSource throwAudioSource;
     [SerializeField] private AudioClip[] throwSounds;
 
-    [SerializeField] private float minThrowVelocity = 2.0f; 
-    [SerializeField] private float maxThrowVelocity = 25.0f; 
-    
-    [SerializeField] private float throwForceMultiplier = 1.5f; 
+    [SerializeField] private float minThrowVelocity = 2.0f;
+    [SerializeField] private float maxThrowVelocity = 25.0f;
 
-    [SerializeField] private Transform headCamera; 
-    [SerializeField] private Vector3 hoverOffset = new Vector3(0.3f, -0.4f, 0.4f); 
-    [SerializeField] private float hoverSpeed = 8f; 
+    [SerializeField] private float throwForceMultiplier = 1.5f;
+
+    [SerializeField] private Transform headCamera;
+    [SerializeField] private Vector3 hoverOffset = new Vector3(0.3f, -0.4f, 0.4f);
+    [SerializeField] private float hoverSpeed = 8f;
 
     private bool isTimerRunning = false;
-    private bool hasPlayedThrowSound = false; 
-    private bool isLevitating; 
+    private bool hasPlayedThrowSound = false;
+    private bool isLevitating;
 
     private XRGrabInteractable grabInteractable;
     private Rigidbody rb;
@@ -30,15 +30,15 @@ public class RockBehavior : MonoBehaviour
         trail = GetComponent<TrailRenderer>();
         grabInteractable = GetComponent<XRGrabInteractable>();
         rb = GetComponent<Rigidbody>();
-        
-        if (headCamera == null && Camera.main != null) 
+
+        if (headCamera == null && Camera.main != null)
             headCamera = Camera.main.transform;
 
         if (GameManager.Instance != null && !GameManager.Instance.isPlayersTurn)
         {
             isLevitating = false;
             rb.useGravity = true;
-            
+
             grabInteractable.throwVelocityScale = 1.0f;
             grabInteractable.throwAngularVelocityScale = 1.0f;
         }
@@ -46,21 +46,21 @@ public class RockBehavior : MonoBehaviour
         {
             isLevitating = true;
             rb.useGravity = false;
-            
+
             grabInteractable.throwVelocityScale = throwForceMultiplier;
             grabInteractable.throwAngularVelocityScale = throwForceMultiplier;
         }
-        
-        rb.isKinematic = false; 
+
+        rb.isKinematic = false;
     }
 
     void Update()
     {
         if (grabInteractable.isSelected)
         {
-            isLevitating = false; 
+            isLevitating = false;
             hasPlayedThrowSound = false;
-            return; 
+            return;
         }
 
         if (isLevitating && headCamera != null)
@@ -75,8 +75,8 @@ public class RockBehavior : MonoBehaviour
 
             transform.position = Vector3.Lerp(transform.position, targetPosition, hoverSpeed * Time.deltaTime);
             transform.rotation = Quaternion.Slerp(transform.rotation, bodyRotation, hoverSpeed * Time.deltaTime);
-            
-            return; 
+
+            return;
         }
 
         if (!isLevitating)
@@ -91,7 +91,9 @@ public class RockBehavior : MonoBehaviour
             if (!hasPlayedThrowSound && rb.linearVelocity.magnitude >= minThrowVelocity)
             {
                 PlayThrowSound();
-                hasPlayedThrowSound = true; 
+                hasPlayedThrowSound = true;
+                GameManager.Instance.hasPlayerThrown = true;
+                Debug.Log("Player has thrown the rock." + GameManager.Instance.hasPlayerThrown);
             }
         }
     }
@@ -107,8 +109,8 @@ public class RockBehavior : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (isLevitating) 
-            return; 
+        if (isLevitating)
+            return;
 
         if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("RockHolder"))
             return;
@@ -122,7 +124,7 @@ public class RockBehavior : MonoBehaviour
 
     IEnumerator CheckMiss()
     {
-        if (trail != null) 
+        if (trail != null)
             trail.enabled = false;
 
         isTimerRunning = true;
