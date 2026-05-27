@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Tura Gracza: Pijesz!");
         isPlayersTurn = true;
+        hasPlayerThrown = false; // Reset flagi - gracz jest gotowy do następnego rzutu
         SwitchDrinkVisibility(false);
 
         if (currentRockInstance == null)
